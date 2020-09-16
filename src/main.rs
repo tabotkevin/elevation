@@ -47,6 +47,7 @@ impl Elevator {
 
 #[derive(Debug)]
 struct User {
+    id: u32,
     name: String,
     current_floor: u32,
     to_floor: u32
@@ -54,8 +55,9 @@ struct User {
 
 impl User {
 
-    pub fn new(name: String, current_floor: u32, to_floor: u32) -> Self {
+    pub fn new(id: u32, name: String, current_floor: u32, to_floor: u32) -> Self {
         User {
+            id: id,
             name: name,
             current_floor: current_floor,
             to_floor: to_floor
@@ -102,7 +104,7 @@ impl Building {
                             println!("Elevator state is {:?}", self.elevator.state);
                             thread::sleep(millis);
                             // self.elevator.passengers.push(&user);
-                            self.elevator.passengers.push(1);
+                            self.elevator.passengers.push(user.id);
                             self.elevator.state = State::Moving;
                             println!("Elevator state is {:?}", self.elevator.state);
                             continue;
@@ -112,7 +114,7 @@ impl Building {
                             println!("Elevator reached user floor {:?}", self.elevator);
                             self.elevator.state = State::Stopped;
                             println!("Elevator state is {:?}", self.elevator.state);
-                            self.elevator.passengers.retain(|&passenger| passenger != 1);
+                            self.elevator.passengers.retain(|&passenger| passenger != user.id);
                             self.elevator.stops.retain(|&stop| stop != user.current_floor);
                             self.elevator.state = State::Moving;
                             println!("Elevator after dropping user {:?}", self.elevator);
@@ -157,10 +159,8 @@ fn main() {
         min_floor: 0
     };
     
-    let user : User = User::new(String::from("Kevin"), 2, 4);
+    let user1 : User = User::new(1, String::from("Kevin"), 2, 4);
+    user1.notify(building);
 
-    user.notify(building)
-
-    // el.passengers.push(user);
-    // println!("Elevator is {} {:?} {:?}", el.current_floor, el.direction, el.passengers);
+    
 }
