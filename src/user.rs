@@ -1,6 +1,6 @@
 use crate::building::Building;
 
-#[derive(Clone)]
+#[derive(Debug)]
 pub struct User {
     pub id: u32,
     pub name: String,

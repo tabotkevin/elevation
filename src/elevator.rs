@@ -4,7 +4,6 @@ use crate::enums::{Direction, State};
 pub struct Elevator {
     pub current_floor: u32,
     pub direction: Direction,
-    // passengers: Vec<User>,
     pub passengers: Vec<u32>,
     pub state: State,
     pub stops: Vec<u32>,
@@ -25,7 +24,7 @@ impl Elevator {
         self.state = State::Off;
     }
 
-    pub fn moves(&mut self, direction: Direction) {
+    pub fn move_to(&mut self, direction: Direction) {
         self.direction = direction;
     }
 }

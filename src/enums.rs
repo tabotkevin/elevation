@@ -4,7 +4,7 @@ pub enum Direction {
     Down,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum State {
     On,
     Off,

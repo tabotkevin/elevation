@@ -2,6 +2,7 @@ mod building;
 mod elevator;
 mod enums;
 mod user;
+mod utils;
 
 use crate::building::Building;
 use crate::elevator::Elevator;
