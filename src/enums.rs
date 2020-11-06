@@ -5,9 +5,13 @@ pub enum Direction {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum State {
-    On,
-    Off,
+pub enum Motion {
     Moving,
     Stopped,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum Power {
+    On,
+    Off,
 }

@@ -1,5 +1,5 @@
 use crate::elevator::Elevator;
-use crate::enums::{Direction, State};
+use crate::enums::Direction;
 use crate::user::User;
 use crate::utils::sleep;
 
@@ -18,15 +18,17 @@ impl Building {
     }
 
     pub fn drive(&mut self, user: &User) {
-        self.elevator.state = State::Moving;
-        // while self.elevator.state == State::On {
-        loop {
+        self.elevator.moves();
+
+        while self.elevator.is_on() {
             match self.elevator.direction {
                 Direction::Up => {
-                    println!("Elevator Going up");
                     sleep(100);
+                    println!(
+                        "Elevator currently at {} floor and going {:?}",
+                        self.elevator.current_floor, self.elevator.direction
+                    );
                     self.elevator.current_floor += 1;
-                    println!("Elevetor is {:?}", self.elevator);
 
                     self.check_stops(user);
                     self.check_floor(user);
@@ -35,10 +37,14 @@ impl Building {
                         self.change_direction(Direction::Down);
                     }
                 }
+
                 Direction::Down => {
-                    println!("Going Down");
+                    sleep(100);
+                    println!(
+                        "Elevator currently at {} floor and going {:?}",
+                        self.elevator.current_floor, self.elevator.direction
+                    );
                     self.elevator.current_floor -= 1;
-                    println!("Elevetor is {:?}", self.elevator);
 
                     self.check_stops(user);
 
@@ -54,39 +60,41 @@ impl Building {
 
     fn check_stops(&mut self, user: &User) {
         if self.elevator.stops.contains(&self.elevator.current_floor) {
-            println!("Elevator stopping at {}", self.elevator.current_floor);
-            self.elevator.state = State::Stopped;
-            println!("Elevator state is {:?}", self.elevator.state);
+            println!(
+                "Elevator stopped for a passenger at floor {}",
+                self.elevator.current_floor
+            );
+            self.elevator.stop();
             sleep(100);
             self.elevator.passengers.push(user.id);
-            self.elevator.state = State::Moving;
-            println!("Elevator state is {:?}", self.elevator.state);
+            println!("Elevator carried carried a passenger {:?}", self.elevator);
+            self.elevator.moves();
         }
     }
 
     fn check_floor(&mut self, user: &User) {
         if self.elevator.current_floor == user.to_floor {
-            println!("Elevator reached user floor {:?}", self.elevator);
-            self.elevator.state = State::Stopped;
-            println!("Elevator state is {:?}", self.elevator.state);
+            println!("Elevator reached passenger's floor {:?}", self.elevator);
+            self.elevator.stop();
             self.elevator
                 .passengers
                 .retain(|&passenger| passenger != user.id);
+            println!(
+                "Elevator dispatched passenger at {} floor",
+                self.elevator.current_floor
+            );
             self.elevator
                 .stops
                 .retain(|&stop| stop != user.current_floor);
-            self.elevator.state = State::Moving;
-            println!("Elevator after dropping user {:?}", self.elevator);
+            self.elevator.moves();
         }
     }
 
     fn change_direction(&mut self, direction: Direction) {
         println!("Elevator reached maximum floor {:?}", self.elevator);
-        self.elevator.state = State::Stopped;
-        println!("Elevator state is {:?}", self.elevator.state);
-        self.elevator.move_to(direction);
-        self.elevator.state = State::Moving;
-        println!("Elevator state is {:?}", self.elevator.state);
+        self.elevator.stop();
+        self.elevator.goto(direction);
+        self.elevator.moves();
     }
 
     fn reached_max(&mut self) -> bool {
